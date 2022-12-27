@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import sqlalchemy
+import json
 
 
 url = "https://github.com/topics"
@@ -105,9 +106,12 @@ for index,i in enumerate(topic_link):
     topic_repo_df = pd.DataFrame(topic_repo_dict)
     topic_repo_df.to_csv(topic_titles[index]+ '.csv',index=None)
     
-    #creating engine and storing data in the database
+    # creating engine and storing data in the database
     engine = sqlalchemy.create_engine("postgresql://postgres:1713@localhost/webscrapping")
     topic_repo_df.to_sql(name = topic_titles[index],if_exists='replace',con = engine)
+
+    with open(topic_titles[index]+ ".json", "w") as writeJSON:
+        json.dump(topic_repo_dict, writeJSON, ensure_ascii=False)
 
     username.clear()
     repo_name.clear()
